@@ -187,6 +187,7 @@ INSERT INTO Borrower
 	('Mr Krabs', '3541 Anchor Way', '678-901-2345')
 ;
 
+SELECT * FROM Borrower
 
 INSERT INTO Book_Loans
 	(BookID, BranchID, CardNo, DateOut, DateDue)
@@ -261,22 +262,24 @@ GO
 CREATE PROC dbo.uspCountCopies
 AS 
 SELECT Number_Of_Copies
-FROM Book_Copies
-WHERE BranchID = 100 AND BookID = 119;
+FROM ((Book_Copies 
+INNER JOIN Library_Branch ON Book_Copies.BranchID = Library_Branch.BranchID)
+INNER JOIN Books ON Books.BookID = Book_Copies.BookID) 
+WHERE Books.Title = 'The Lost Tribe' AND Library_Branch.BranchName = 'Sharpstown'; 
 
 EXEC dbo.uspCountCopies
 
-
---STORED PROCEDURE 2: Copies of "The Lost Tribe" owned by each branch
+--STORED PROCEDURE 2: Copies of "The Lost Tribe" owned by each branch 
 USE Library
 GO
 
-CREATE PROC dbo.uspLTEachBranch
+CREATE PROC dbo.uspLTEachBranch 
 AS 
 SELECT BranchName, Number_Of_Copies AS 'Copies'  
-FROM Library_Branch
-INNER JOIN Book_Copies ON Library_Branch.BranchID = Book_Copies.BranchID
-WHERE BookID = 119;
+FROM ((Book_Copies 
+INNER JOIN Library_Branch ON Book_Copies.BranchID = Library_Branch.BranchID)
+INNER JOIN Books ON Books.BookID = Book_Copies.BookID) 
+WHERE Books.Title = 'The Lost Tribe';
 
 EXEC dbo.uspLTEachBranch
 
@@ -341,13 +344,12 @@ GO
 
 CREATE PROC dbo.uspSKBooks
 AS
-SELECT Title, SUM(Number_Of_Copies) AS Copies
+SELECT Title, Number_Of_Copies AS Copies
 FROM (((Books 
 INNER JOIN Book_Authors ON Books.BookID = Book_Authors.BookID)
 INNER JOIN Book_Copies ON Books.BookID = Book_Copies.BookID) 
 INNER JOIN Library_Branch ON Book_Copies.BranchID = Library_Branch.BranchID)
 WHERE Book_Authors.AuthorName = 'Stephen King' AND Library_Branch.BranchName = 'Central'
-GROUP BY Books.Title
 ;
 
 EXEC dbo.uspSKBooks
