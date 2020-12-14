@@ -10,3 +10,5 @@ This system utilises a relational database. I created several tables that were n
 I then seeded the database to provide an initial set of data to the database so that any stored procedures written could be effectively tested.
 
 Lastly I created stored procedures to add functionality to the system. Through these stored procedures, one could do various things like check the number of copies of a particular book owned by the library branches, find out how many books have been loaned out and which books were due that particular day. The complete list of stored procedures available can be viewed in the [SQLcodingProjects folder](https://github.com/dhavap/SQL/tree/master/SQLcodingProjects).
+
+![Library Management System in SQL](./SQLcodingProjects/LibraryMS.png)
